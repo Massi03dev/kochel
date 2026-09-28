@@ -145,6 +145,7 @@ class EntityResolver:
                                 or c_canon.lower() in raw_work.lower()
                             ):
                                 canonical_composer = c_canon
+                                raw_composer = c_short
                                 raw_work = re.sub(
                                     re.escape(c_short),
                                     "",

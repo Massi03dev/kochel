@@ -16,7 +16,8 @@ keywords = ["classical-music", "ner", "metadata", "onnx", "audio-tagging"]
 dependencies = [
     "onnxruntime>=1.16.0",
     "tokenizers>=0.15.0",
-    "numpy>=1.20.0"
+    "numpy>=1.20.0",
+    "gradio>=4.44.1",
 ]
 
 [project.urls]
