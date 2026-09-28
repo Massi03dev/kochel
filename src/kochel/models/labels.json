@@ -1,0 +1,18 @@
+{
+  "O": 0,
+  "B-COMPOSER": 1,
+  "I-COMPOSER": 2,
+  "B-WORK": 3,
+  "I-WORK": 4,
+  "B-CATALOG_PREFIX": 5,
+  "B-CATALOG_NUM": 6,
+  "B-CATALOG_SUB": 7,
+  "B-KEY": 8,
+  "I-KEY": 9,
+  "B-MOVEMENT_NUM": 10,
+  "B-MOVEMENT_NAME": 11,
+  "I-MOVEMENT_NAME": 12,
+  "B-PERFORMER": 13,
+  "I-PERFORMER": 14,
+  "B-YEAR": 15
+}

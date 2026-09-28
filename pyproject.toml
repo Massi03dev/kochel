@@ -1,9 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "kochel"
 version = "0.1.0"
-description = "Lightweight, deterministic parser and canonical entity resolver for classical music metadata"
+description = "Ultra-lightweight classical music metadata parser & entity linker based on ONNX and SQLite."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Massimiliano", email = "massi@example.com"}
+]
+keywords = ["classical-music", "ner", "metadata", "onnx", "audio-tagging"]
 dependencies = [
-    "requests>=2.34.2",
+    "onnxruntime>=1.16.0",
+    "tokenizers>=0.15.0",
+    "numpy>=1.20.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/kochel"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+kochel = [
+    "models/*.onnx",
+    "models/*.json",
+    "data/*.sqlite"
 ]
