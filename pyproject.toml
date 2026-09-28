@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "Massimiliano", email = "massi@example.com"}
+    {name = "Massimiliano", email = "massyfederici@gmail.com"}
 ]
 keywords = ["classical-music", "ner", "metadata", "onnx", "audio-tagging"]
 dependencies = [
@@ -20,7 +20,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/kochel"
+Homepage = "https://github.com/Massi03dev/kochel"
+Repository = "https://github.com/Massi03dev/kochel"
+Issues = "https://github.com/Massi03dev/kochel/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
