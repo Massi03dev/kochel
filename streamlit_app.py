@@ -212,30 +212,27 @@ st.markdown(
 )
 
 # 3. Header & Identità di Marca
-st.markdown('<div class="hero-container">', unsafe_allow_html=True)
 if LOGO_PATH.exists():
-    col_l, col_img, col_r = st.columns([1, 0.8, 1])
+    col_l, col_img, col_r = st.columns([1, 0.65, 1])
     with col_img:
         st.image(str(LOGO_PATH), use_container_width=True)
 
-st.markdown('<h1 class="hero-title">Kochel</h1>', unsafe_allow_html=True)
-st.markdown(
-    '<p class="hero-subtitle">Deterministic entity resolver for unstructured classical music metadata.</p>',
-    unsafe_allow_html=True,
-)
-st.markdown(
-    """
-    <div class="hero-meta-bar">
-        <div class="hero-meta-item"><span class="hero-meta-dot"></span>Sub-15ms CPU</div>
-        <div class="hero-meta-item">•</div>
-        <div class="hero-meta-item">MiniLM INT8 (ONNX)</div>
-        <div class="hero-meta-item">•</div>
-        <div class="hero-meta-item">Canonical SQLite Catalog</div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-st.markdown("</div>", unsafe_allow_html=True)
+hero_bar_html = """<div class="hero-container">
+<h1 class="hero-title">Kochel</h1>
+<p class="hero-subtitle">Deterministic entity resolver for unstructured classical music metadata.</p>
+<div class="hero-meta-bar">
+<div class="hero-meta-item"><span class="hero-meta-dot"></span>Sub-15ms CPU</div>
+<div class="hero-meta-item">•</div>
+<div class="hero-meta-item">MiniLM INT8 (ONNX)</div>
+<div class="hero-meta-item">•</div>
+<div class="hero-meta-item">Canonical SQLite Catalog</div>
+</div>
+</div>"""
+
+if hasattr(st, "html"):
+    st.html(hero_bar_html)
+else:
+    st.markdown(hero_bar_html, unsafe_allow_html=True)
 st.write("")
 
 # 4. Esempi Veloci tramite Pills
@@ -325,51 +322,53 @@ if query_val and query_val.strip():
     if year:
         cat_badges.append(f'<span class="pill-badge badge-year">📅 {year}</span>')
 
-    # Scheda Risultati
-    st.markdown(
-        f"""
-    <div class="archive-card">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            <!-- Colonna 1: Opera e Catalogo -->
-            <div>
-                <div class="section-eyebrow">Composition & Catalog</div>
-                <div class="composer-name">{comp_canonical}</div>
-                <div class="source-token">Raw input: <i>"{comp_raw or comp_canonical}"</i></div>
-                <div class="work-title">{work_title}</div>
-                <div style="margin-top: 0.6rem;">
-                    {"".join(cat_badges) if cat_badges else '<span style="color: #666; font-size: 0.85rem;">No catalog identified</span>'}
-                </div>
-            </div>
+    # Scheda Risultati (Renderizzata con st.html per evitare che il parser Markdown scambi gli spazi per blocchi di codice)
+    badges_html = "".join(cat_badges) if cat_badges else '<span style="color: #666; font-size: 0.85rem;">No catalog identified</span>'
 
-            <!-- Colonna 2: Esecutori & Incisione -->
-            <div>
-                <div class="section-eyebrow">Recording & Performers</div>
-                <div>
-                    {
-                        "".join([
-                            f'''<div class="performer-card">
-                                <div>
-                                    <div class="performer-name">{p.get("name")}</div>
-                                    <div style="font-size: 0.78rem; color: #828a9b;">{p.get("instrument") or "Ensemble / Soloist"}</div>
-                                </div>
-                                <span class="performer-role-tag">{p.get("role", "artist")}</span>
-                            </div>'''
-                            for p in performers
-                        ]) if performers else '<div style="color: #616773; font-style: italic; font-size: 0.88rem; padding: 1rem 0;">No performers detected in input query.</div>'
-                    }
-                </div>
-            </div>
-        </div>
+    if performers:
+        perf_cards = []
+        for p in performers:
+            p_name = p.get("name") or "Unknown"
+            p_inst = p.get("instrument") or "Ensemble / Soloist"
+            p_role = p.get("role", "artist")
+            perf_cards.append(
+                f'<div class="performer-card">'
+                f'<div>'
+                f'<div class="performer-name">{p_name}</div>'
+                f'<div style="font-size: 0.78rem; color: #828a9b;">{p_inst}</div>'
+                f'</div>'
+                f'<span class="performer-role-tag">{p_role}</span>'
+                f'</div>'
+            )
+        performers_html = "".join(perf_cards)
+    else:
+        performers_html = '<div style="color: #616773; font-style: italic; font-size: 0.88rem; padding: 1rem 0;">No performers detected in input query.</div>'
 
-        <div class="latency-footer">
-            <span>Deterministic CPU inference in <b>{latency_ms:.2f} ms</b></span>
-            <span>•</span>
-            <span>INT8 MiniLM + Canonical SQLite</span>
-        </div>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    card_html = f"""<div class="archive-card">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+<div>
+<div class="section-eyebrow">Composition & Catalog</div>
+<div class="composer-name">{comp_canonical}</div>
+<div class="source-token">Raw input: <i>"{comp_raw or comp_canonical}"</i></div>
+<div class="work-title">{work_title}</div>
+<div style="margin-top: 0.6rem;">{badges_html}</div>
+</div>
+<div>
+<div class="section-eyebrow">Recording & Performers</div>
+<div>{performers_html}</div>
+</div>
+</div>
+<div class="latency-footer">
+<span>Deterministic CPU inference in <b>{latency_ms:.2f} ms</b></span>
+<span>•</span>
+<span>INT8 MiniLM + Canonical SQLite</span>
+</div>
+</div>"""
+
+    if hasattr(st, "html"):
+        st.html(card_html)
+    else:
+        st.markdown(card_html, unsafe_allow_html=True)
 
     # 7. Dettagli JSON completi per ispezione
     with st.expander("🔍 View Raw Output Schema"):
