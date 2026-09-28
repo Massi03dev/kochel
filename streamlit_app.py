@@ -97,8 +97,12 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 3. Header
-st.title("🎼 Kochel")
+# 3. Header & Branding
+LOGO_PATH = Path(__file__).resolve().parent / "assets" / "logo.svg"
+if LOGO_PATH.exists():
+    st.image(str(LOGO_PATH), width=130)
+
+st.title("Kochel: Classical Music Metadata Parser")
 st.markdown("Ultra-fast parser & entity linker for messy classical music tracks.")
 st.markdown(
     '<span class="tech-pill">⚡ Sub-15ms CPU</span>'

@@ -1,10 +1,23 @@
-# kochel 🎻
+<p align="center">
+  <img src="./assets/logo.svg" width="220" alt="Kochel Logo">
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python: 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Runtime: ONNX](https://img.shields.io/badge/Runtime-ONNX-005CED.svg)](https://onnxruntime.ai/)
-[![Latency: ~10ms](https://img.shields.io/badge/Latency-~10ms%20CPU-brightgreen.svg)](https://github.com/Massi03dev/kochel)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://kochel.streamlit.app)
+<h1 align="center">Kochel</h1>
+
+<p align="center">
+  Ultra-fast parser & entity linker for messy classical music tracks.
+</p>
+
+<p align="center">
+  <a href="https://kochel.streamlit.app"><img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" alt="Streamlit App"></a>
+  <a href="https://huggingface.co/spaces/Massi03dev/kochel"><img src="https://img.shields.io/badge/%F9%9F%A4%97%20Hugging%20Face-Spaces-yellow" alt="Hugging Face Spaces"></a>
+  <img src="https://img.shields.io/github/license/Massi03dev/kochel" alt="License">
+  <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/Runtime-ONNX-005CED.svg" alt="Runtime ONNX">
+  <img src="https://img.shields.io/badge/Latency-~10ms%20CPU-brightgreen.svg" alt="Latency">
+</p>
+
+***
 
 **kochel** is an ultra-lightweight, deterministic classical music metadata parser and entity linker.
 
