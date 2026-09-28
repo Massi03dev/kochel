@@ -4,6 +4,7 @@
 [![Python: 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Runtime: ONNX](https://img.shields.io/badge/Runtime-ONNX-005CED.svg)](https://onnxruntime.ai/)
 [![Latency: ~10ms](https://img.shields.io/badge/Latency-~10ms%20CPU-brightgreen.svg)](https://github.com/Massi03dev/kochel)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://kochel.streamlit.app)
 
 **kochel** is an ultra-lightweight, deterministic classical music metadata parser and entity linker.
 
