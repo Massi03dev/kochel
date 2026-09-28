@@ -8,147 +8,295 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 import kochel
 
 # 1. Configurazione Pagina
+LOGO_PATH = Path(__file__).resolve().parent / "assets" / "logo.svg"
 st.set_page_config(
-    page_title="Kochel | Classical Music Parser",
-    page_icon="🎼",
+    page_title="Kochel — Classical Music Metadata Resolver",
+    page_icon=str(LOGO_PATH) if LOGO_PATH.exists() else "🎻",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-# 2. Stile CSS personalizzato (Card, Badge, Tipografia)
+# 2. Design System & Tipografia d'Autore (Dark Luxury & Archival Feel)
 st.markdown(
     """
 <style>
-    /* Spaziatura generale e pulizia */
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    /* Reset e larghezza leggibile */
     .block-container {
-        padding-top: 2rem;
-        padding-bottom: 3rem;
-        max-width: 780px;
+        padding-top: 2.2rem;
+        padding-bottom: 4rem;
+        max-width: 820px;
     }
-    
-    /* Header badges */
-    .tech-pill {
-        display: inline-block;
-        background-color: rgba(128, 128, 128, 0.1);
-        border: 1px solid rgba(128, 128, 128, 0.25);
-        border-radius: 999px;
-        padding: 2px 10px;
-        font-size: 0.78rem;
-        font-weight: 500;
-        margin-right: 6px;
-        color: #888;
+
+    /* Palette e Sfondo Premium */
+    body, [data-testid="stAppViewContainer"] {
+        background-color: #0b0d11;
+        color: #e2e4e9;
+        font-family: 'Inter', -apple-system, sans-serif;
     }
-    
-    /* Card per i metadati */
-    .meta-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(128, 128, 128, 0.18);
-        border-radius: 12px;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
+
+    /* Hero Header */
+    .hero-container {
+        text-align: center;
+        margin-bottom: 1.8rem;
     }
-    
-    .meta-title {
-        font-size: 0.82rem;
+
+    .hero-title {
+        font-family: 'Cinzel', serif;
+        font-size: 2.6rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: #f7f3ea;
+        margin: 0.6rem 0 0.3rem 0;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #888;
-        margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.05rem;
+        font-weight: 300;
+        color: #9aa1b0;
+        max-width: 580px;
+        margin: 0 auto 1.2rem auto;
+        line-height: 1.5;
+    }
+
+    .hero-meta-bar {
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 999px;
+        padding: 5px 16px;
+        font-size: 0.78rem;
+        color: #838a99;
+        letter-spacing: 0.03em;
+    }
+
+    .hero-meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .hero-meta-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #10b981;
+    }
+
+    /* Container Scheda Archivio */
+    .archive-card {
+        background: radial-gradient(circle at top left, rgba(30, 36, 48, 0.5), rgba(16, 19, 26, 0.85));
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 1.6rem;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        margin-top: 1.2rem;
+        backdrop-filter: blur(12px);
+    }
+
+    .section-eyebrow {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
         font-weight: 600;
-    }
-    
-    .main-text {
-        font-size: 1.35rem;
-        font-weight: 600;
-        line-height: 1.3;
-        margin-bottom: 0.25rem;
-    }
-    
-    .sub-text {
-        font-size: 0.9rem;
-        color: #888;
-    }
-    
-    /* Tag colorati per catalogo e tonalità */
-    .tag {
-        display: inline-block;
-        border-radius: 6px;
-        padding: 3px 8px;
-        font-size: 0.82rem;
-        font-weight: 600;
-        margin-right: 6px;
-    }
-    .tag-catalog { background-color: rgba(59, 130, 246, 0.18); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .tag-key { background-color: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .tag-role { background-color: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); text-transform: capitalize; }
-    
-    /* Badge latenza */
-    .perf-badge {
-        font-size: 0.82rem;
-        color: #10b981;
-        font-weight: 500;
+        color: #d4af37; /* Oro antico classico */
+        margin-bottom: 0.6rem;
         display: flex;
         align-items: center;
-        gap: 4px;
-        margin-top: 0.4rem;
+        gap: 6px;
+    }
+
+    .composer-name {
+        font-family: 'Cinzel', serif;
+        font-size: 1.65rem;
+        font-weight: 600;
+        color: #ffffff;
+        letter-spacing: 0.04em;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .source-token {
+        font-size: 0.82rem;
+        color: #717888;
+        margin-top: 0.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .work-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #e5e8f0;
+        margin-bottom: 0.85rem;
+        line-height: 1.35;
+    }
+
+    /* Badge raffinati */
+    .pill-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        margin-right: 8px;
+        margin-bottom: 6px;
+    }
+
+    .badge-catalog {
+        background: rgba(197, 160, 89, 0.12);
+        border: 1px solid rgba(197, 160, 89, 0.35);
+        color: #f1cf88;
+        font-family: 'Cinzel', serif;
+        letter-spacing: 0.05em;
+    }
+
+    .badge-key {
+        background: rgba(79, 131, 204, 0.12);
+        border: 1px solid rgba(79, 131, 204, 0.3);
+        color: #8cb8f0;
+    }
+
+    .badge-year {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #c0c5d0;
+    }
+
+    /* Performer Row */
+    .performer-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+        padding: 0.75rem 0.95rem;
+        margin-bottom: 0.6rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .performer-name {
+        font-size: 0.96rem;
+        font-weight: 600;
+        color: #f0f2f7;
+    }
+
+    .performer-role-tag {
+        font-size: 0.76rem;
+        text-transform: capitalize;
+        padding: 2px 8px;
+        border-radius: 6px;
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        color: #fbbf24;
+    }
+
+    .latency-footer {
+        font-size: 0.76rem;
+        color: #5d6473;
+        margin-top: 1.2rem;
+        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
     }
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-# 3. Header & Branding
-LOGO_PATH = Path(__file__).resolve().parent / "assets" / "logo.svg"
+# 3. Header & Identità di Marca
+st.markdown('<div class="hero-container">', unsafe_allow_html=True)
 if LOGO_PATH.exists():
-    st.image(str(LOGO_PATH), width=130)
+    col_l, col_img, col_r = st.columns([1, 0.8, 1])
+    with col_img:
+        st.image(str(LOGO_PATH), use_container_width=True)
 
-st.title("Kochel: Classical Music Metadata Parser")
-st.markdown("Ultra-fast parser & entity linker for messy classical music tracks.")
+st.markdown('<h1 class="hero-title">Kochel</h1>', unsafe_allow_html=True)
 st.markdown(
-    '<span class="tech-pill">⚡ Sub-15ms CPU</span>'
-    '<span class="tech-pill">🧠 MiniLM INT8</span>'
-    '<span class="tech-pill">🗄️ SQLite Catalog</span>',
+    '<p class="hero-subtitle">Deterministic entity resolver for unstructured classical music metadata.</p>',
     unsafe_allow_html=True,
 )
+st.markdown(
+    """
+    <div class="hero-meta-bar">
+        <div class="hero-meta-item"><span class="hero-meta-dot"></span>Sub-15ms CPU</div>
+        <div class="hero-meta-item">•</div>
+        <div class="hero-meta-item">MiniLM INT8 (ONNX)</div>
+        <div class="hero-meta-item">•</div>
+        <div class="hero-meta-item">Canonical SQLite Catalog</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+st.markdown("</div>", unsafe_allow_html=True)
 st.write("")
 
-# 4. Query di esempio selezionabili
+# 4. Esempi Veloci tramite Pills
 EXAMPLES = {
-    "Beethoven Symphony No. 5 (Karajan)": "Beethoven Symphony no. 5 Op. 67 Karajan 1962",
+    "Beethoven 5 (Karajan)": "Beethoven Symphony no. 5 Op. 67 Karajan 1962",
     "Chopin Nocturne (Rubinstein)": "Chopin nocturne op 9 no 2 rubinstein rec 1965",
-    "Messy Torrent Filename": "01_Beethoven_Symphony.5_Op.67_Allegro_Karajan_BPO_1962_FLAC",
-    "Bach Concerto (Gould)": "Bach BWV 1046 Gould",
-    "Inverted Artist/Work": "Claudio Abbado Brahms Double Concerto Op 102 Live stereo",
     "Mozart KV 622 (Argerich)": "Mozart KV622 Argerich",
+    "Messy Torrent Rip": "01_Beethoven_Symphony.5_Op.67_Allegro_Karajan_BPO_1962_FLAC",
+    "Inverted Artist / Composer": "Claudio Abbado Brahms Double Concerto Op 102 Live stereo",
+    "Bach BWV 1046 (Gould)": "Bach BWV 1046 Gould",
+    "Vivaldi Gloria": "Vivaldi RV 589 Gloria in D major",
 }
 
-selected_label = st.selectbox(
-    "💡 Select an example track or test your own:",
-    options=["-- Custom Input --"] + list(EXAMPLES.keys()),
-    index=1,
+if "query_input" not in st.session_state:
+    st.session_state.query_input = "Beethoven Symphony no. 5 Op. 67 Karajan 1962"
+
+
+def set_example(query: str):
+    st.session_state.query_input = query
+
+
+st.markdown(
+    '<div style="font-size: 0.82rem; font-weight: 500; color: #838a99; margin-bottom: 0.4rem;">Select a curated test query:</div>',
+    unsafe_allow_html=True,
 )
 
-default_val = EXAMPLES[selected_label] if selected_label != "-- Custom Input --" else ""
+# Renderizza i pulsanti di esempio in una riga compatta
+chips_cols = st.columns([1, 1, 1, 1])
+example_keys = list(EXAMPLES.keys())
+for i, key in enumerate(example_keys[:4]):
+    with chips_cols[i]:
+        if st.button(key, key=f"chip_{i}", use_container_width=True):
+            set_example(EXAMPLES[key])
 
-# 5. Form di input
-with st.form("parse_form", clear_on_submit=False):
-    col_input, col_btn = st.columns([5, 1.2], vertical_alignment="bottom")
+chips_cols_2 = st.columns([1, 1, 1])
+for i, key in enumerate(example_keys[4:]):
+    with chips_cols_2[i]:
+        if st.button(key, key=f"chip_2_{i}", use_container_width=True):
+            set_example(EXAMPLES[key])
+
+st.write("")
+
+# 5. Form di Input
+with st.form("resolver_form"):
+    col_input, col_submit = st.columns([5.5, 1.2], vertical_alignment="bottom")
     with col_input:
-        query_text = st.text_input(
-            "Track title / search string",
-            value=default_val,
-            placeholder="e.g. Beethoven 5 Karajan 1962",
+        query_val = st.text_input(
+            "Search or Paste Raw Classical Track String",
+            value=st.session_state.query_input,
+            placeholder="e.g. Beethoven Symphony 5 Op. 67 Karajan 1962",
             label_visibility="collapsed",
         )
-    with col_btn:
+    with col_submit:
         submitted = st.form_submit_button(
-            "Parse", type="primary", use_container_width=True
+            "Resolve", type="primary", use_container_width=True
         )
 
-# 6. Esecuzione e Rendering Risultati
-if query_text:
+# 6. Elaborazione e Scheda di Risoluzione
+if query_val and query_val.strip():
     t0 = time.perf_counter()
-    result = kochel.parse(query_text.strip())
+    result = kochel.parse(query_val.strip())
     latency_ms = (time.perf_counter() - t0) * 1000
 
     work = result.get("work", {})
@@ -159,79 +307,70 @@ if query_text:
     performers = recording.get("performers", [])
     year = recording.get("year")
 
+    comp_canonical = composer.get("canonical") or "Unknown Composer"
+    comp_raw = composer.get("raw")
+    work_title = work.get("canonical_title") or "Unknown Work Title"
+
+    # Composizione catalogo formattato (es. Op. 67, BWV 1046, KV 622)
+    cat_badges = []
+    if catalog.get("prefix") and catalog.get("number"):
+        cat_str = f"{catalog['prefix']} {catalog['number']}"
+        if catalog.get("sub_number"):
+            cat_str += f" No. {catalog['sub_number']}"
+        cat_badges.append(f'<span class="pill-badge badge-catalog">🎼 {cat_str}</span>')
+
+    if key:
+        cat_badges.append(f'<span class="pill-badge badge-key">🎹 {key}</span>')
+
+    if year:
+        cat_badges.append(f'<span class="pill-badge badge-year">📅 {year}</span>')
+
+    # Scheda Risultati
     st.markdown(
-        f'<div class="perf-badge">⚡ Parsed & canonicalized in <b>{latency_ms:.2f} ms</b> on CPU</div>',
+        f"""
+    <div class="archive-card">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <!-- Colonna 1: Opera e Catalogo -->
+            <div>
+                <div class="section-eyebrow">Composition & Catalog</div>
+                <div class="composer-name">{comp_canonical}</div>
+                <div class="source-token">Raw input: <i>"{comp_raw or comp_canonical}"</i></div>
+                <div class="work-title">{work_title}</div>
+                <div style="margin-top: 0.6rem;">
+                    {"".join(cat_badges) if cat_badges else '<span style="color: #666; font-size: 0.85rem;">No catalog identified</span>'}
+                </div>
+            </div>
+
+            <!-- Colonna 2: Esecutori & Incisione -->
+            <div>
+                <div class="section-eyebrow">Recording & Performers</div>
+                <div>
+                    {
+                        "".join([
+                            f'''<div class="performer-card">
+                                <div>
+                                    <div class="performer-name">{p.get("name")}</div>
+                                    <div style="font-size: 0.78rem; color: #828a9b;">{p.get("instrument") or "Ensemble / Soloist"}</div>
+                                </div>
+                                <span class="performer-role-tag">{p.get("role", "artist")}</span>
+                            </div>'''
+                            for p in performers
+                        ]) if performers else '<div style="color: #616773; font-style: italic; font-size: 0.88rem; padding: 1rem 0;">No performers detected in input query.</div>'
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="latency-footer">
+            <span>Deterministic CPU inference in <b>{latency_ms:.2f} ms</b></span>
+            <span>•</span>
+            <span>INT8 MiniLM + Canonical SQLite</span>
+        </div>
+    </div>
+    """,
         unsafe_allow_html=True,
     )
-    st.write("")
 
-    # Due colonne principali per le schede
-    col_left, col_right = st.columns(2)
-
-    with col_left:
-        # Card Compositore & Opera
-        comp_canon = composer.get("canonical") or "Unknown Composer"
-        comp_raw = composer.get("raw")
-        title_canon = work.get("canonical_title") or "Unknown Title"
-
-        # Badge Catalogo (es. Op. 67 o BWV 1046)
-        cat_str = ""
-        if catalog.get("prefix") and catalog.get("number"):
-            cat_str = f"{catalog['prefix']} {catalog['number']}"
-            if catalog.get("sub_number"):
-                cat_str += f" No. {catalog['sub_number']}"
-
-        st.markdown(
-            f"""
-        <div class="meta-card">
-            <div class="meta-title">Work & Composition</div>
-            <div class="main-text">{comp_canon}</div>
-            <div class="sub-text" style="margin-bottom: 0.8rem;">Recognized from: <i>"{comp_raw or comp_canon}"</i></div>
-            <div style="font-size: 1.1rem; font-weight: 500; margin-bottom: 0.75rem;">{title_canon}</div>
-            <div>
-                {f'<span class="tag tag-catalog">{cat_str}</span>' if cat_str else ''}
-                {f'<span class="tag tag-key">{key}</span>' if key else ''}
-            </div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col_right:
-        # Card Esecutori & Incisione
-        perf_html = ""
-        if performers:
-            for p in performers:
-                name = p.get("name", "Unknown")
-                role = p.get("role", "artist")
-                inst = p.get("instrument")
-                detail = f" • {inst}" if inst else ""
-                perf_html += f"""
-                <div style="margin-bottom: 0.65rem;">
-                    <div style="font-weight: 600;">{name}</div>
-                    <div style="margin-top: 2px;">
-                        <span class="tag tag-role">{role}</span>
-                        <span style="font-size: 0.8rem; color: #888;">{detail}</span>
-                    </div>
-                </div>
-                """
-        else:
-            perf_html = '<div style="color: #777; font-style: italic;">No specific performer linked</div>'
-
-        st.markdown(
-            f"""
-        <div class="meta-card">
-            <div class="meta-title">Recording & Performers</div>
-            <div style="margin-bottom: 0.75rem;">
-                <span style="font-size: 0.95rem; font-weight: 600;">Release / Rec. Year:</span>
-                <span style="font-size: 0.95rem; margin-left: 4px; color: #60a5fa;">{year or 'Not detected'}</span>
-            </div>
-            {perf_html}
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    # Sezione JSON grezzo
-    with st.expander("🔍 Inspect Full JSON Output"):
+    # 7. Dettagli JSON completi per ispezione
+    with st.expander("🔍 View Raw Output Schema"):
         st.json(result)
